@@ -144,6 +144,8 @@ eksctl delete cluster --name devops-cluster --region us-east-1
 ## Repo Map
 ![2024-09-25 20_09_24-DevOps Technical Test Assistance and 11 more pages - Personal - Microsoft​ Edge](https://github.com/user-attachments/assets/ac8c5b1e-100c-4655-bd5c-a02ee81421b1)
 
+## Diagram
+![Untitled](https://github.com/user-attachments/assets/ee8359c6-62b2-43f7-a04e-0f7adbd91f04)
 
 ## Screenshots
 ![2024-09-25 20_02_22-Api Root – Django REST framework and 9 more pages - Personal - Microsoft​ Edge](https://github.com/user-attachments/assets/583b371d-1e01-49d3-ae22-f85c6390ddc7)
