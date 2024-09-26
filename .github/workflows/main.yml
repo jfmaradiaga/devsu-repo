@@ -1,39 +1,57 @@
-name: DJANGO Pipeline
+name: GitHub Actions Pipeline
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.11'
-        
+
     - name: Install dependencias
-      working-directory: demo-devops-python
       run: |
         pip install -r requirements.txt
-        
+
     - name: Run Django Tests
-      working-directory: demo-devops-python
       run: |
         python manage.py test
-        
-    - name: Build docker image
-      working-directory: demo-devops-python
+
+    - name: Build Docker image
       run: |
-        docker build -t jfmaradiaga/django-devops-app:latest .
-        
-    - name: Log into Docker hub
+        docker build -t jfmaradiaga/django-devops-app:${{ github.sha }} .
+
+    - name: Log into DockerHub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        
-    - name: Push Docker Image to Docker Hub
+
+    - name: Push Docker image to Docker Hub
       run: |
-        docker push jfmaradiaga/django-devops-app:latest
+        docker push jfmaradiaga/django-devops-app:${{ github.sha }}
+
+    
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.27.0'
+
+    - name: AWS CLI configure
+      run: |
+        aws eks --region us-east-1 update-kubeconfig --name devops-cluster
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl set image deployment/django-app django-app=jfmaradiaga/django-devops-app:${{ github.sha }}
+        kubectl rollout status deployment/django-app
