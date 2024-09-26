@@ -19,14 +19,17 @@ jobs:
         python-version: '3.11'
 
     - name: Install dependencias
+      working-directory: demo-devops-python
       run: |
         pip install -r requirements.txt
 
     - name: Run Django Tests
+      working-directory: demo-devops-python
       run: |
         python manage.py test
 
     - name: Build Docker image
+      working-directory: demo-devops-python
       run: |
         docker build -t jfmaradiaga/django-devops-app:${{ github.sha }} .
 
