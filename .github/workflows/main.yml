@@ -18,7 +18,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencias
+    - name: Install dependencies
       working-directory: demo-devops-python
       run: |
         pip install -r requirements.txt
@@ -42,6 +42,13 @@ jobs:
         docker push jfmaradiaga/django-devops-app:${{ github.sha }}
 
     
+    - name: Test AWS credentials
+      run: |
+        aws sts get-caller-identity
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
       with:
@@ -49,13 +56,15 @@ jobs:
 
     - name: AWS CLI configure
       run: |
-       aws eks --region us-east-1 update-kubeconfig --name devops-cluster
+        aws eks --region us-east-1 update-kubeconfig --name devops-cluster
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 
     - name: Deploy to Kubernetes
       run: |
         kubectl set image deployment/django-app django-app=jfmaradiaga/django-devops-app:${{ github.sha }}
         kubectl rollout status deployment/django-app
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
