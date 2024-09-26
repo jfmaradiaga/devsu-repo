@@ -18,7 +18,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies
+    - name: Install dependencias
       working-directory: demo-devops-python
       run: |
         pip install -r requirements.txt
@@ -48,15 +48,6 @@ jobs:
       env:
        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    #- name: Debug AWS credentials
-    #  run: |
-    #   echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
-    #   echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
-    #  env:
-    #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
